@@ -69,10 +69,10 @@ app.get("/api/ip/:ip", async (req, res) => {
 });
 
 /* ===== NUMBER INFO (mit API-Key) ===== */
-app.get("/api/number/:num", async (req, res) => {
+app.get("/api/number/:number", async (req, res) => {
   try {
     // Beispiel mit apilayer (https://apilayer.com/marketplace/number_verification-api)
-    const r = await fetch(`https://api.apilayer.com/number_verification/validate?number=${req.params.num}`, {
+    const r = await fetch(`https://api.apilayer.com/number_verification/validate?number=${req.params.number}`, {
       headers: { apikey: process.env.NUMVERIFY_KEY } // <- musst du in Render als ENV setzen
     });
 

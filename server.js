@@ -56,4 +56,32 @@ app.post("/api/generate", async (req, res) => {
   }
 });
 
+/* ===== IP LOCATOR ===== */
+app.get("/api/ip/:ip", async (req, res) => {
+  try {
+    const r = await fetch(`http://ip-api.com/json/${req.params.ip}?fields=status,message,country,regionName,city,zip,lat,lon,isp,org,query`);
+    const data = await r.json();
+    res.json(data);
+  } catch (err) {
+    console.error("❌ IP Lookup Fehler:", err);
+    res.status(500).json({ error: "Fehler beim IP Lookup" });
+  }
+});
+
+/* ===== NUMBER INFO (mit API-Key) ===== */
+app.get("/api/number/:num", async (req, res) => {
+  try {
+    // Beispiel mit apilayer (https://apilayer.com/marketplace/number_verification-api)
+    const r = await fetch(`https://api.apilayer.com/number_verification/validate?number=${req.params.num}`, {
+      headers: { apikey: process.env.NUMVERIFY_KEY } // <- musst du in Render als ENV setzen
+    });
+
+    const data = await r.json();
+    res.json(data);
+  } catch (err) {
+    console.error("❌ Nummern-Info Fehler:", err);
+    res.status(500).json({ error: "Fehler beim Nummern-Lookup" });
+  }
+});
+
 app.listen(PORT, () => console.log(`✅ Backend läuft auf Port ${PORT}`));

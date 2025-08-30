@@ -71,17 +71,25 @@ app.get("/api/ip/:ip", async (req, res) => {
 /* ===== NUMBER INFO (mit API-Key) ===== */
 app.get("/api/number/:number", async (req, res) => {
   try {
-    // Beispiel mit apilayer (https://apilayer.com/marketplace/number_verification-api)
-    const r = await fetch(`https://api.apilayer.com/number_verification/validate?number=${req.params.number}`, {
-      headers: { apikey: process.env.NUMVERIFY_KEY } // <- musst du in Render als ENV setzen
-    });
+    const number = encodeURIComponent(req.params.number);
+
+    const r = await fetch(
+      `https://api.apilayer.com/number_verification/validate?number=${number}`,
+      { headers: { apikey: process.env.NUMVERIFY_KEY } }
+    );
 
     const data = await r.json();
+
+    if (data.success === false) {
+      return res.status(400).json({ error: data.error.info });
+    }
+
     res.json(data);
   } catch (err) {
     console.error("❌ Nummern-Info Fehler:", err);
     res.status(500).json({ error: "Fehler beim Nummern-Lookup" });
   }
 });
+
 
 app.listen(PORT, () => console.log(`✅ Backend läuft auf Port ${PORT}`));
